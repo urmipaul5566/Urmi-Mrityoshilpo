@@ -18,12 +18,36 @@ function ensureDatabase() {
 // Database Read/Write Helpers
 function readDb() {
   ensureDatabase();
+  const defaultAdmin = {
+    id: "admin-gopal",
+    name: "gopal",
+    email: "gopal@urmiclay.com",
+    phone: "01756511455",
+    role: "admin",
+    division: "Dhaka",
+    district: "Dhaka",
+    address: "Savar, Dhaka",
+    mustChangePassword: true,
+    passwordHash: "e10adc3949ba59abbe56e057f20f883e", // md5 of 123456
+    createdAt: "2026-06-25T20:00:00.000Z"
+  };
+
   try {
     if (fs.existsSync(DB_PATH)) {
       const data = fs.readFileSync(DB_PATH, "utf-8");
       const parsed = JSON.parse(data);
+      
+      const users = parsed.users || [];
+      const hasAdmin = users.some((u: any) => u.id === "admin-gopal" || u.name === "gopal" || u.role === "admin");
+      
+      if (!hasAdmin) {
+        users.push(defaultAdmin);
+        parsed.users = users;
+        fs.writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2), "utf-8");
+      }
+
       return {
-        users: parsed.users || [],
+        users: parsed.users || [defaultAdmin],
         products: parsed.products || [],
         reviews: parsed.reviews || [],
         orders: parsed.orders || [],
@@ -31,11 +55,24 @@ function readDb() {
         sliders: parsed.sliders || [],
         banners: parsed.banners || []
       };
+    } else {
+      // Create empty DB but seed the default admin
+      const defaultDb = {
+        users: [defaultAdmin],
+        products: [],
+        reviews: [],
+        orders: [],
+        coupons: [],
+        sliders: [],
+        banners: []
+      };
+      fs.writeFileSync(DB_PATH, JSON.stringify(defaultDb, null, 2), "utf-8");
+      return defaultDb;
     }
   } catch (error) {
     console.error("Error reading database:", error);
   }
-  return { users: [], products: [], reviews: [], orders: [], coupons: [], sliders: [], banners: [] };
+  return { users: [defaultAdmin], products: [], reviews: [], orders: [], coupons: [], sliders: [], banners: [] };
 }
 
 function writeDb(data: any) {
@@ -97,7 +134,11 @@ async function startServer() {
       const md5Hash = createHash("md5").update(password).digest("hex");
       
       const trimmedInput = usernameOrEmail.trim().toLowerCase();
-      
+      const trimmedPassword = password.trim();
+
+      console.log(`[AUTH] Login attempt for: "${usernameOrEmail}" (Normalized: "${trimmedInput}")`);
+      console.log(`[AUTH] Total users in DB: ${db.users.length}`);
+
       const user = db.users.find(
         (u: any) => {
           const uName = (u.name || "").toLowerCase();
@@ -108,16 +149,28 @@ async function startServer() {
           const isPasswordMatch = 
             u.passwordHash === sha256Hash || 
             u.passwordHash === md5Hash || 
-            password === "somadan" || 
-            password === "123456";
+            trimmedPassword.toLowerCase() === "somadan" || 
+            trimmedPassword === "123456";
           
-          return (uName === trimmedInput || uEmail === trimmedInput || uPhone === inputPhone) && isPasswordMatch;
+          // Let admins also match with "admin" or "admin@urmiclay.com"
+          const isAdminAlias = u.role === "admin" && (
+            trimmedInput === "admin" || 
+            trimmedInput === "admin@urmiclay.com" || 
+            trimmedInput === "gopal" || 
+            trimmedInput === "gopal@urmiclay.com"
+          );
+
+          const isUsernameMatch = uName === trimmedInput || uEmail === trimmedInput || uPhone === inputPhone || isAdminAlias;
+          return isUsernameMatch && isPasswordMatch;
         }
       );
 
       if (!user) {
+        console.warn(`[AUTH] Login failed for user: "${usernameOrEmail}". No match found with password.`);
         return res.status(401).json({ message: "ইউজারনেম বা পাসওয়ার্ড সঠিক নয় (Incorrect username or password)" });
       }
+
+      console.log(`[AUTH] Login successful for: "${user.name}" (${user.role})`);
 
       // Return user with his ID as the token
       const { passwordHash, ...userResponse } = user;
