@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+  --font-bangla: "Hind Siliguri", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-clay-primary: #8B4513;
+  --color-clay-secondary: #C46A2D;
+  --color-clay-accent: #F59E0B;
+  --color-clay-bg: #FFF8F2;
+  --color-clay-text: #222222;
+
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Premium styling scrollbar and glassmorphism defaults */
+body {
+  background-color: #FFF8F2;
+  color: #222222;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar matching the clay theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF8F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #C46A2D;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8B4513;
+}
+
+/* Glassmorphism custom helpers */
+.glass-panel {
+  background: rgba(255, 248, 242, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(196, 106, 45, 0.1);
+}
+
+.clay-shadow-sm {
+  box-shadow: 0 2px 8px -1px rgba(139, 69, 19, 0.06), 0 1px 3px -1px rgba(139, 69, 19, 0.04);
+}
+
+.clay-shadow {
+  box-shadow: 0 10px 25px -5px rgba(139, 69, 19, 0.1), 0 8px 16px -6px rgba(139, 69, 19, 0.05);
+}
+
+.clay-shadow-lg {
+  box-shadow: 0 20px 40px -10px rgba(139, 69, 19, 0.15), 0 15px 25px -10px rgba(139, 69, 19, 0.08);
+}
