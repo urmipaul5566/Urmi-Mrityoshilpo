@@ -50,11 +50,15 @@ export default function ProductCard({
 
         {/* Product Image with Hover Zoom */}
         <img
-          src={product.images[0]}
+          src={product.images[0] || "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80"}
           alt={product.nameEnglish}
           className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
           loading="lazy"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80";
+          }}
         />
 
         {/* Quick View Button hover overlay */}

@@ -62,6 +62,27 @@ function ensureDatabase() {
   }
 }
 
+// Repair broken /uploads/ images when ephemeral filesystem resets on cloud hosting
+function repairMissingUploads(data: any) {
+  if (!data || !data.products) return false;
+  let modified = false;
+  for (const p of data.products) {
+    if (p && Array.isArray(p.images)) {
+      p.images = p.images.map((img: string) => {
+        if (typeof img === "string" && img.startsWith("/uploads/")) {
+          const filePath = path.join(process.cwd(), img);
+          if (!fs.existsSync(filePath)) {
+            modified = true;
+            return "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80";
+          }
+        }
+        return img;
+      });
+    }
+  }
+  return modified;
+}
+
 // Initialize database from Firestore or local disk
 async function initDbSync() {
   ensureDatabase();
@@ -84,7 +105,7 @@ async function initDbSync() {
   if (fs.existsSync(DB_PATH)) {
     try {
       const parsed = JSON.parse(fs.readFileSync(DB_PATH, "utf-8"));
-      if (parsed && parsed.products && parsed.products.length > 0) {
+      if (parsed) {
         localData = {
           users: parsed.users || localData.users,
           products: parsed.products || localData.products,
@@ -105,6 +126,14 @@ async function initDbSync() {
   if (!hasAdmin) {
     localData.users.push(defaultAdmin);
   }
+
+  // Ensure all default products exist in localData
+  for (const defItem of DEFAULT_INITIAL_DATABASE.products) {
+    if (!localData.products.some((p: any) => p.id === defItem.id)) {
+      localData.products.push(defItem);
+    }
+  }
+  repairMissingUploads(localData);
 
   memoryCache = localData;
 
@@ -132,15 +161,22 @@ async function initDbSync() {
           cloudData.users.push(defaultAdmin);
           await setDoc(doc(dbFirestore, "users", String(defaultAdmin.id)), defaultAdmin);
         }
-        // Merge demo defaults if any collection is empty in cloud
+        // Merge demo defaults if missing in cloud
         for (const col of COLLECTIONS) {
-          if ((!cloudData[col] || cloudData[col].length === 0) && (localData[col] && localData[col].length > 0)) {
-            cloudData[col] = localData[col];
-            for (const item of cloudData[col]) {
-              if (item && item.id) {
-                await setDoc(doc(dbFirestore, col, String(item.id)), item);
-                knownIds[col].add(String(item.id));
-              }
+          const defaults = localData[col] || [];
+          for (const item of defaults) {
+            if (item && item.id && !cloudData[col].some((ci: any) => String(ci.id) === String(item.id))) {
+              cloudData[col].push(item);
+              await setDoc(doc(dbFirestore, col, String(item.id)), item);
+              knownIds[col].add(String(item.id));
+            }
+          }
+        }
+        const repaired = repairMissingUploads(cloudData);
+        if (repaired) {
+          for (const p of cloudData.products) {
+            if (p && p.id) {
+              await setDoc(doc(dbFirestore, "products", String(p.id)), p);
             }
           }
         }
@@ -209,6 +245,7 @@ function readDb() {
       memoryCache = { users: [], products: [], reviews: [], orders: [], coupons: [], sliders: [], banners: [] };
     }
   }
+  repairMissingUploads(memoryCache);
   return memoryCache;
 }
 

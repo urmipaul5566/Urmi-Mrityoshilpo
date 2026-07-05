@@ -338,6 +338,42 @@ export const DEFAULT_INITIAL_DATABASE = {
       "price": 490,
       "seoDescription": "Drink naturally cool and alkaline water with our traditional handmade clay water pitcher. Pure river clay.",
       "shortDescription": "প্রাকৃতিকভাবে পানি ঠান্ডা ও মিনারেল সমৃদ্ধ রাখার চমৎকার লাল মাটির কলসি।"
+    },
+    {
+      "id": "clay-1783260160367",
+      "nameBangla": "মাটির ওয়াল সেট মহাদেবের মূর্তি",
+      "nameEnglish": "Wall set mohadeb murti",
+      "category": "Gift Items",
+      "subCategory": "Wall Decor",
+      "price": 200,
+      "discountPrice": 180,
+      "stock": 50,
+      "rating": 5,
+      "reviewsCount": 3,
+      "isFeatured": true,
+      "isBestSeller": false,
+      "isNewArrival": true,
+      "images": [
+        "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80"
+      ],
+      "description": "আমাদের দক্ষ কারিগর দ্বারা নিপুণ হাতে খাঁটি লাল মাটি দিয়ে তৈরি মহাদেবের মূর্তি ওয়াল সেট। ঘরের দেয়ালে বা পড়ার টেবিলে রাখার জন্য অত্যন্ত নান্দনিক ও আকর্ষণীয়। সম্পূর্ণ পরিবেশবান্ধব ও টেকসই।",
+      "shortDescription": "১ পিস মাটির তৈরি নান্দনিক মহাদেবের মূর্তি ওয়াল সেট।",
+      "material": "পোড়ামাটি (Terracotta)",
+      "size": "১০ ইঞ্চি",
+      "weight": "1 kg",
+      "color": "কালো, নীল, সাদা",
+      "SKU": "Urmi-wall-set-001",
+      "tags": [
+        "Wall",
+        "set",
+        "mohadeb",
+        "murti",
+        "sculpture",
+        "gift"
+      ],
+      "seoTitle": "Wall set mohadeb murti - Urmi Clay",
+      "seoDescription": "Handmade terracotta clay wall set mohadeb murti in Bangladesh.",
+      "createdAt": "2026-07-05T14:02:40.367Z"
     }
   ],
   "reviews": [

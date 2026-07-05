@@ -134,7 +134,7 @@ export default function Header({
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1">
           <div className="flex items-center gap-2 font-medium">
             <span className="bg-clay-accent text-clay-text px-2 py-0.5 rounded-full text-[10px] uppercase font-bold animate-pulse-slow">অফার</span>
-            <span>ঢাকা সিটির ভেতরে ডেলিভারি চার্জ মাত্র ৬০ টাকা! যেকোনো তথ্য বা অর্ডারের জন্য: <strong>০১৭৫৬৫১১৪৫৫</strong></span>
+            <span>জয়পুরহাট সিটির ভেতরে ডেলিভারি চার্জ মাত্র ৬০ টাকা! যেকোনো তথ্য বা অর্ডারের জন্য: <strong>০১৭৫৬৫১১৪৫৫</strong></span>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5 border-r border-white/20 pr-4">

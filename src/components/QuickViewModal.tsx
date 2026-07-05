@@ -88,10 +88,14 @@ export default function QuickViewModal({
           <div className="flex flex-col gap-4">
             <div className="aspect-square w-full rounded-2xl overflow-hidden bg-white border border-clay-secondary/5 relative group">
               <img
-                src={selectedImage}
+                src={selectedImage || "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80"}
                 alt={product.nameEnglish}
                 className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-300"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80";
+                }}
               />
               {hasDiscount && (
                 <span className="absolute top-4 left-4 bg-clay-accent text-clay-text text-xs font-bold px-3 py-1.5 rounded-full shadow-md">
@@ -109,7 +113,16 @@ export default function QuickViewModal({
                     onClick={() => setSelectedImage(img)}
                     className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img ? "border-clay-primary shadow-sm" : "border-transparent opacity-60 hover:opacity-100"}`}
                   >
-                    <img src={img} alt="thumbnail" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img 
+                      src={img} 
+                      alt="thumbnail" 
+                      className="w-full h-full object-cover" 
+                      referrerPolicy="no-referrer" 
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80";
+                      }}
+                    />
                   </button>
                 ))}
               </div>
