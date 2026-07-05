@@ -1,0 +1,165 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile containing personal information and role",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "customer"] },
+        "division": { "type": "string" },
+        "district": { "type": "string" },
+        "address": { "type": "string" },
+        "passwordHash": { "type": "string" },
+        "mustChangePassword": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "phone", "role"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Agricultural product listed in the store",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "stock": { "type": "number" },
+        "category": { "type": "string" },
+        "subcategory": { "type": "string" },
+        "unit": { "type": "string" },
+        "images": { "type": "array" },
+        "videoUrl": { "type": "string" },
+        "isFeatured": { "type": "boolean" },
+        "isNew": { "type": "boolean" },
+        "specifications": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "price", "stock", "category"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Customer review for a product",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "productId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "reply": { "type": "string" },
+        "replyDate": { "type": "string" },
+        "date": { "type": "string" }
+      },
+      "required": ["id", "productId", "rating"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer purchase order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhone": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "discount": { "type": "number" },
+        "shippingFee": { "type": "number" },
+        "total": { "type": "number" },
+        "status": { "type": "string" },
+        "shippingAddress": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "trackingNumber": { "type": "string" },
+        "couponCode": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "total", "status", "shippingAddress"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Discount coupon code",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "code": { "type": "string" },
+        "discountType": { "type": "string", "enum": ["percentage", "fixed"] },
+        "discountAmount": { "type": "number" },
+        "minPurchase": { "type": "number" },
+        "maxDiscount": { "type": "number" },
+        "expiryDate": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "usageLimit": { "type": "number" },
+        "usedCount": { "type": "number" }
+      },
+      "required": ["id", "code", "discountAmount"]
+    },
+    "Slider": {
+      "title": "Slider",
+      "description": "Hero banner slider image",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "link": { "type": "string" },
+        "order": { "type": "number" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "imageUrl"]
+    },
+    "Banner": {
+      "title": "Banner",
+      "description": "Promotional banner",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "link": { "type": "string" },
+        "position": { "type": "string" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "imageUrl"]
+    }
+  },
+  "firestore": {
+    "users": {
+      "schema": "User",
+      "description": "Collection of user profiles and admin users"
+    },
+    "products": {
+      "schema": "Product",
+      "description": "Collection of products available in the store"
+    },
+    "reviews": {
+      "schema": "Review",
+      "description": "Collection of customer reviews"
+    },
+    "orders": {
+      "schema": "Order",
+      "description": "Collection of customer purchase orders"
+    },
+    "coupons": {
+      "schema": "Coupon",
+      "description": "Collection of promotional discount coupons"
+    },
+    "sliders": {
+      "schema": "Slider",
+      "description": "Collection of hero banner sliders"
+    },
+    "banners": {
+      "schema": "Banner",
+      "description": "Collection of promotional banners"
+    }
+  }
+}
