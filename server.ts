@@ -4,7 +4,7 @@ import fs from "fs";
 import { createHash, randomBytes } from "crypto";
 import { createServer as createViteServer } from "vite";
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, collection, getDocs, deleteDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "firebase/firestore";
 import { DEFAULT_INITIAL_DATABASE } from "./src/lib/defaultDbData.js";
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
@@ -86,23 +86,9 @@ function ensureDatabase() {
 
 // Repair broken /uploads/ images when ephemeral filesystem resets on cloud hosting
 function repairMissingUploads(data: any) {
-  if (!data || !data.products) return false;
-  let modified = false;
-  for (const p of data.products) {
-    if (p && Array.isArray(p.images)) {
-      p.images = p.images.map((img: string) => {
-        if (typeof img === "string" && img.startsWith("/uploads/")) {
-          const filePath = path.join(process.cwd(), img);
-          if (!fs.existsSync(filePath)) {
-            modified = true;
-            return "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80";
-          }
-        }
-        return img;
-      });
-    }
-  }
-  return modified;
+  // We no longer mutate the database image URLs to placeholders, which previously caused permanent data loss.
+  // Instead, the custom /uploads/:filename middleware dynamically restores missing images on-the-fly when requested.
+  return false;
 }
 
 // Patch sliders & banners with updated aesthetic assets (e.g. clay raw material backgrounds)
@@ -210,6 +196,12 @@ async function initDbSync() {
   // Now sync from Firestore if connected
   if (dbFirestore) {
     try {
+      // 1. We no longer bulk-download and restore all uploaded images from Firestore at startup.
+      // Doing so with many base64 images severely slows down container booting on Render.com (free tier cold starts).
+      // Instead, we have custom on-demand restoration middleware below for "/uploads/:filename" which restores images instantly when requested.
+      console.log("[FIREBASE] Skipping bulk image restoration at boot. On-demand dynamic restoration is enabled.");
+
+      // 2. Now sync collections from Firestore cloud database
       console.log("[FIREBASE] Syncing collections from Firestore cloud database...");
       let totalCloudDocs = 0;
       const cloudData: any = {};
@@ -218,8 +210,10 @@ async function initDbSync() {
         const snap = await getDocs(collection(dbFirestore, col));
         snap.forEach(d => {
           const docData = d.data();
-          cloudData[col].push(docData);
-          if (docData.id) knownIds[col].add(String(docData.id));
+          if (docData) {
+            cloudData[col].push(docData);
+            if (docData.id) knownIds[col].add(String(docData.id));
+          }
         });
         totalCloudDocs += snap.size;
       }
@@ -280,49 +274,6 @@ async function initDbSync() {
           }
         }
         console.log("[FIREBASE] Initial cloud seeding complete!");
-      }
-
-      // Restore persistent uploaded images from Firestore uploaded_images collection
-      try {
-        console.log("[FIREBASE] Checking and restoring persistent uploaded images from Firestore...");
-        const uploadsDir = path.join(process.cwd(), "uploads");
-        const backupDir = path.join(process.cwd(), "src/assets/images");
-        if (!fs.existsSync(uploadsDir)) {
-          fs.mkdirSync(uploadsDir, { recursive: true });
-        }
-        if (!fs.existsSync(backupDir)) {
-          fs.mkdirSync(backupDir, { recursive: true });
-        }
-        const uploadsSnap = await getDocs(collection(dbFirestore, "uploaded_images"));
-        let restoredCount = 0;
-        uploadsSnap.forEach(d => {
-          const item = d.data();
-          if (item && item.fileName && item.base64Data) {
-            const filePath = path.join(uploadsDir, item.fileName);
-            const backupPath = path.join(backupDir, item.fileName);
-            let needed = false;
-            if (!fs.existsSync(filePath)) {
-              needed = true;
-            }
-            if (needed) {
-              let cleanBase64 = item.base64Data;
-              if (cleanBase64.includes(";base64,")) {
-                cleanBase64 = cleanBase64.split(";base64,")[1];
-              }
-              const buffer = Buffer.from(cleanBase64, "base64");
-              fs.writeFileSync(filePath, buffer);
-              if (!fs.existsSync(backupPath)) {
-                fs.writeFileSync(backupPath, buffer);
-              }
-              restoredCount++;
-            }
-          }
-        });
-        if (restoredCount > 0) {
-          console.log(`[FIREBASE] Restored ${restoredCount} persistent uploaded images from Firestore cloud.`);
-        }
-      } catch (uploadRestoreErr) {
-        console.error("[FIREBASE] Error restoring persistent uploaded images from Firestore:", uploadRestoreErr);
       }
     } catch (err) {
       console.error("[FIREBASE] Error loading from Firestore, falling back to local storage:", err);
@@ -1259,6 +1210,52 @@ async function startServer() {
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
+  // Intercept uploads requests to dynamically restore files from Firestore on demand if missing
+  app.get("/uploads/:filename", async (req, res, next) => {
+    const filename = req.params.filename;
+    const uploadsDir = path.join(process.cwd(), "uploads");
+    const filePath = path.join(uploadsDir, filename);
+
+    if (fs.existsSync(filePath)) {
+      return res.sendFile(filePath);
+    }
+
+    if (dbFirestore) {
+      try {
+        console.log(`[UPLOADS] File ${filename} missing on disk. Attempting dynamic restoration from Firestore...`);
+        const docRef = doc(dbFirestore, "uploaded_images", filename);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const item = docSnap.data();
+          if (item && item.base64Data) {
+            let cleanBase64 = item.base64Data;
+            if (cleanBase64.includes(";base64,")) {
+              cleanBase64 = cleanBase64.split(";base64,")[1];
+            }
+            const buffer = Buffer.from(cleanBase64, "base64");
+            
+            if (!fs.existsSync(uploadsDir)) {
+              fs.mkdirSync(uploadsDir, { recursive: true });
+            }
+            fs.writeFileSync(filePath, buffer);
+            
+            const backupDir = path.join(process.cwd(), "src/assets/images");
+            if (fs.existsSync(backupDir)) {
+              fs.writeFileSync(path.join(backupDir, filename), buffer);
+            }
+            
+            console.log(`[UPLOADS] Successfully restored missing file dynamically: ${filename}`);
+            return res.sendFile(filePath);
+          }
+        }
+      } catch (err) {
+        console.error(`[UPLOADS] Error dynamically restoring file ${filename} from Firestore:`, err);
+      }
+    }
+
+    return res.redirect("https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80");
+  });
+
   app.use("/uploads", express.static(uploadsDir));
 
   // --- VITE / STATIC MIDDLEWARE SETUP ---
