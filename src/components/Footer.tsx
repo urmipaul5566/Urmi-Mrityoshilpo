@@ -73,7 +73,7 @@ export default function Footer({ onNavigate }: FooterProps) {
           <h4 className="text-lg font-bold text-white border-b border-clay-secondary/20 pb-2">গুরুত্বপূর্ণ লিঙ্ক</h4>
           <ul className="flex flex-col gap-2.5 text-xs font-medium font-bangla">
             <li>
-              <button onClick={() => onNavigate("home")} className="hover:text-clay-accent transition-colors text-left">হোম (Home)</button>
+              <button onClick={() => onNavigate("home")} className="hover:text-clay-accent transition-colors text-left">মাটির সামগ্রী</button>
             </li>
             <li>
               <button onClick={() => onNavigate("shop")} className="hover:text-clay-accent transition-colors text-left">আমাদের দোকান (Shop)</button>

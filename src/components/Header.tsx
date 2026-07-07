@@ -390,7 +390,7 @@ export default function Header({
               onClick={() => onNavigate("home")} 
               className={`hover:text-clay-primary transition-colors py-1 relative ${activePage === "home" ? "text-clay-primary font-bold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-clay-primary" : "text-clay-text"}`}
             >
-              হোম (Home)
+              মাটির সামগ্রী
             </button>
             
             <button 
@@ -488,7 +488,7 @@ export default function Header({
                 onClick={() => { onNavigate("home"); setIsMobileMenuOpen(false); }}
                 className="text-left py-1 hover:text-clay-primary border-b border-clay-secondary/5"
               >
-                হোম (Home)
+                মাটির সামগ্রী
               </button>
               <button 
                 onClick={() => { onNavigate("shop"); setIsMobileMenuOpen(false); }}

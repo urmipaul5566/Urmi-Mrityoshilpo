@@ -1,191 +1,591 @@
 {
   "users": [
     {
+      "address": "জয়পুরহাট নতুনহাট গরুহাটি,জয়পুরহাট।",
+      "passwordHash": "e10adc3949ba59abbe56e057f20f883e",
+      "district": "Joypurhat",
+      "createdAt": "2026-06-25T20:00:00.000Z",
+      "role": "admin",
+      "division": "Rajshahi",
       "name": "gopal",
       "phone": "01756511455",
-      "createdAt": "2026-06-25T20:00:00.000Z",
-      "division": "Rajshahi",
-      "email": "urmipaul5566@gmail.com",
-      "role": "admin",
-      "address": "জয়পুরহাট নতুনহাট গরুহাটি,জয়পুরহাট।",
       "id": "admin-gopal",
-      "district": "Joypurhat",
-      "mustChangePassword": true,
-      "passwordHash": "e10adc3949ba59abbe56e057f20f883e"
+      "email": "urmipaul5566@gmail.com",
+      "mustChangePassword": true
     },
     {
-      "mustChangePassword": false,
-      "district": "Dhaka",
-      "passwordHash": "e10adc3949ba59abbe56e057f20f883e",
       "id": "customer-demo",
       "email": "arif@gmail.com",
+      "mustChangePassword": false,
       "division": "Dhaka",
-      "address": "House 12, Road 5, Dhanmondi",
       "role": "customer",
-      "createdAt": "2026-06-25T20:10:00.000Z",
       "phone": "01812345678",
-      "name": "Arif Rahman"
+      "name": "Arif Rahman",
+      "district": "Dhaka",
+      "createdAt": "2026-06-25T20:10:00.000Z",
+      "passwordHash": "e10adc3949ba59abbe56e057f20f883e",
+      "address": "House 12, Road 5, Dhanmondi"
     }
   ],
   "products": [
     {
+      "reviewsCount": 0,
+      "weight": "1 kg",
+      "stock": 50,
+      "color": "কালো, নীল,সাদা",
+      "createdAt": "2026-07-05T14:02:40.367Z",
+      "nameBangla": "মাটির ওয়াল সেট মহাদেবের মূর্তি ",
+      "nameEnglish": "Wall  set mohadeb murti ",
+      "isNewArrival": true,
+      "SKU": "Urmi-wall set-001",
+      "material": " মাটির তৈরি",
+      "isFeatured": false,
+      "shortDescription": "১ পিস মাটির তৈরি মহাদেবের মূর্তি ",
+      "category": "Gift Items",
+      "price": 200,
+      "id": "clay-1783260160367",
+      "subCategory": "",
       "rating": 5,
+      "isBestSeller": false,
+      "images": [
+        "/uploads/clay_mahadev_wall_art_1783390164143.jpg"
+      ],
       "tags": [
         "Wall",
         "set",
         "mohadeb"
       ],
-      "SKU": "Urmi-wall set-001",
       "size": "১০ ইঞ্চি",
+      "seoDescription": "https://urmi-mrityoshilpo.onrender.com/",
+      "seoTitle": "Wall  set mohadeb murti ",
+      "description": "আমাদের দক্ষ কারিগর দ্বারা নিপুন হাতে খাঁটি লাল মাটি দিয়ে তৈরি।"
+    },
+    {
+      "reviewsCount": 0,
+      "weight": "4 kg",
+      "stock": 20,
+      "color": "Red",
+      "nameBangla": "মাটির ফিল্টার",
+      "createdAt": "2026-07-06T17:05:50.854Z",
+      "isNewArrival": true,
+      "nameEnglish": "Clay filter",
+      "SKU": "Urmi-pot-002",
+      "material": "ন্যাচারাল লাল মাটির তৈরি",
+      "isFeatured": false,
+      "category": "Kitchen Items",
+      "shortDescription": "১পিস মাটির ফিল্টার ও একটি গ্লাস",
+      "price": 1200,
+      "id": "clay-1783357550854",
+      "subCategory": "",
+      "isBestSeller": false,
+      "rating": 5,
       "images": [
         "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80"
       ],
-      "id": "clay-1783260160367",
-      "description": "আমাদের দক্ষ কারিগর দ্বারা নিপুন হাতে খাঁটি লাল মাটি দিয়ে তৈরি।",
-      "seoTitle": "Wall  set mohadeb murti ",
-      "isFeatured": false,
-      "nameEnglish": "Wall  set mohadeb murti ",
-      "createdAt": "2026-07-05T14:02:40.367Z",
-      "category": "Gift Items",
-      "nameBangla": "মাটির ওয়াল সেট মহাদেবের মূর্তি ",
+      "tags": [
+        "মাটির ফিল্টার",
+        "গ্লাস"
+      ],
+      "size": "12 inchi",
+      "description": "আমাদের কারিগর দ্বারা নিপুন হাতে লাল মাটি তৈরি। এটি স্বাস্থ্যসম্মত এবং পরিবেশবান্ধ।",
+      "seoDescription": "মাটির ফিল্টার ও গ্লাস",
+      "seoTitle": "Clay filter"
+    },
+    {
+      "images": [
+        "/uploads/clay_mahadev_wall_art_1783390164143.jpg"
+      ],
+      "seoTitle": "মাটির তৈরি ভোলানাথের ওয়ালমেট",
+      "seoDescription": "ন্যাচারাল মাটি দিয়ে তৈরি দক্ষ কারিগর দ্বারা তৈরি শ্",
+      "size": "10ঔ ইঞ্চি",
+      "description": "আমাদের দক্ষ কালিকোদ্ধারা নিপুন হাতে তৈরি।",
+      "tags": [
+        "মাটির পিঠারো প্লাস"
+      ],
+      "id": "clay-1783358527155",
       "price": 200,
-      "weight": "1 kg",
-      "color": "কালো, নীল,সাদা",
-      "stock": 50,
-      "reviewsCount": 0,
+      "category": "Gift Items",
+      "shortDescription": "এক পিস মহাদেবের মূর্তি",
+      "isFeatured": false,
+      "material": "ন্যাচারাল মাটি দিয়ে তৈরি",
+      "rating": 5,
       "isBestSeller": false,
-      "isNewArrival": true,
-      "shortDescription": "১ পিস মাটির তৈরি মহাদেবের মূর্তি ",
-      "material": " মাটির তৈরি",
       "subCategory": "",
-      "seoDescription": "https://urmi-mrityoshilpo.onrender.com/"
+      "nameBangla": "মাটির ওয়াল সেট মহাদেবের মূর্তি ",
+      "createdAt": "2026-07-06T17:22:07.155Z",
+      "SKU": "Urmi-f",
+      "isNewArrival": true,
+      "nameEnglish": "Clay wall sat mohadeb ",
+      "stock": 20,
+      "weight": "1 kg ",
+      "reviewsCount": 0,
+      "color": "কালো সাদা, নীল"
+    },
+    {
+      "tags": [
+        "cups",
+        "tea",
+        "traditional-cup",
+        "kitchen-items"
+      ],
+      "size": "150ml per cup",
+      "seoDescription": "Get eco-friendly handmade clay tea cups set of 6 at affordable prices in Bangladesh. Healthy and reusable.",
+      "images": [
+        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80"
+      ],
+      "isBestSeller": true,
+      "shortDescription": "স্বাস্থ্যসম্মত লাল মাটির তৈরি চায়ের কাপের চমৎকার আকর্ষণীয় সেট (৬ পিস)।",
+      "id": "clay-cup-01",
+      "discountPrice": 240,
+      "reviewsCount": 12,
+      "stock": 99,
+      "description": "পরিবেশবান্ধব ও পুনর্ব্যবহারযোগ্য মাটির চায়ের কাপ সেট। মাটির কাপে চা বা কফি পানের অনুভূতিই অন্যরকম। এটি কোনো প্রকার ক্ষতিকর কেমিক্যাল ছাড়াই তৈরি, তাই স্বাস্থ্যের জন্য শতভাগ নিরাপদ। অতিথিদের আপ্যায়নে এই মাটির কাপ আপনার রুচিশীলতার পরিচয় দেবে।",
+      "seoTitle": "Clay Tea Cups 6pcs Set Price in BD - Urmi Mrityoshilpo",
+      "subCategory": "Tableware",
+      "rating": 4.5,
+      "material": "Red Mud / লাল মাটি",
+      "isFeatured": true,
+      "category": "Clay Cup",
+      "price": 300,
+      "isNewArrival": false,
+      "nameEnglish": "Clay Tea Cups (Pack of 6)",
+      "SKU": "URMI-CUP-004",
+      "createdAt": "2026-06-25T13:00:00.000Z",
+      "nameBangla": "প্রাকৃতিক মাটির চায়ের কাপ (৬ পিস)",
+      "color": "Brick Red",
+      "weight": "0.8 kg per set"
+    },
+    {
+      "weight": "1.2 kg",
+      "color": "Natural Terracotta",
+      "nameBangla": "হস্তশিল্প খোদাই করা ফুলের টব",
+      "createdAt": "2026-06-25T11:00:00.000Z",
+      "isNewArrival": true,
+      "nameEnglish": "Hand-Carved Flower Vase",
+      "SKU": "URMI-FLW-002",
+      "category": "Clay Flower Pot",
+      "isFeatured": true,
+      "material": "Baked Terracotta Clay",
+      "price": 420,
+      "subCategory": "Home Decor",
+      "rating": 4.6,
+      "seoTitle": "Handmade Clay Flower Pot in BD - Urmi Mrityoshilpo",
+      "description": "নান্দনিক নকশায় খোদাই করা এই মাটির ফুলের টবটি আপনার বসার ঘর বা বারান্দার সৌন্দর্য বহুগুণ বাড়িয়ে দেবে। খাঁটি পোড়ামাটি (Terracotta) দিয়ে তৈরি হওয়ায় এটি অত্যন্ত টেকসই এবং পরিবেশবান্ধব। গাছের শিকড়ে বাতাস চলাচলের জন্য মাটির টব সবচেয়ে উপযোগী।",
+      "reviewsCount": 3,
+      "stock": 40,
+      "shortDescription": "হাতে খোদাই করা আকর্ষণীয় পোড়ামাটির আকর্ষণীয় ফুলের টব।",
+      "id": "clay-flower-pot-01",
+      "discountPrice": 350,
+      "isBestSeller": false,
+      "images": [
+        "https://images.unsplash.com/photo-1598511726623-d3c2fa53e284?w=600&auto=format&fit=crop&q=80"
+      ],
+      "seoDescription": "Enhance your home and garden with our traditional handmade clay flower pots. Eco-friendly terracotta planters.",
+      "size": "Height: 10 inches",
+      "tags": [
+        "flower pot",
+        "vase",
+        "garden",
+        "decor",
+        "carved"
+      ]
+    },
+    {
+      "stock": 20,
+      "reviewsCount": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=600&auto=format&fit=crop&q=80"
+      ],
+      "seoDescription": "Handcrafted terracotta gift boxes and clay jewelry cases for unique traditional gifts in Bangladesh.",
+      "size": "Small (5 x 5 inches)",
+      "tags": [
+        "gift",
+        "gift-item",
+        "jewelry-box",
+        "traditional-gift"
+      ],
+      "id": "clay-jewelry-gift-box",
+      "discountPrice": 310,
+      "shortDescription": "হাতে তৈরি খোদাইকৃত পোড়ামাটির ঢাকনাযুক্ত গহনার বাক্স।",
+      "isBestSeller": false,
+      "nameBangla": "পোড়ামাটির চমৎকার গহনা বাক্স",
+      "createdAt": "2026-06-25T18:00:00.000Z",
+      "SKU": "URMI-BOX-009",
+      "isNewArrival": true,
+      "nameEnglish": "Terracotta Decorative Gift Box",
+      "weight": "0.5 kg",
+      "color": "Terracotta Red with accents",
+      "seoTitle": "Terracotta Decorative Gift Jewelry Box Bangladesh",
+      "description": "উপহার দেওয়ার জন্য বা নিজের মূল্যবান গহনা ও জিনিসপত্র সযত্নে রাখতে ঐতিহ্যবাহী নকশার এই পোড়ামাটির বাক্সটি অত্যন্ত দৃষ্টিনন্দন। এর ঢাকনাটি সুদৃশ্যভাবে খোদাই করা এবং এটি সম্পূর্ণ পরিবেশবান্ধব। প্রিয়জনকে দেশীয় সংস্কৃতির ছোঁয়ায় তৈরি উপহার দিতে এটি সেরা পছন্দ।",
+      "price": 380,
+      "category": "Gift Items",
+      "isFeatured": false,
+      "material": "Clay",
+      "rating": 4.3,
+      "subCategory": "Utility Box"
+    },
+    {
+      "seoTitle": "Aesthetic Terracotta Clay Table Lamp Bangladesh",
+      "description": "সন্ধ্যায় আপনার ঘরকে এক মায়াবী আলোয় ভরিয়ে তুলতে আমাদের এই বিশেষ পোড়ামাটির ল্যাম্পটি অনন্য। এর ছোট ছোট ছিদ্র দিয়ে যখন আলো বের হয়, তখন দেয়ালে চমৎকার আল্পনার মতো নকশা তৈরি হয়। এটি সম্পূর্ণ হাতে ফুটো করে নিখুঁতভাবে তৈরি করা হয়েছে।",
+      "category": "Clay Lamp",
+      "isFeatured": false,
+      "material": "High-fired Clay",
+      "price": 1200,
+      "subCategory": "Lighting",
+      "rating": 4.9,
+      "nameBangla": "নান্দনিক পোড়ামাটির টেবিল ল্যাম্প",
+      "createdAt": "2026-06-25T12:00:00.000Z",
+      "isNewArrival": true,
+      "nameEnglish": "Aesthetic Terracotta Table Lamp",
+      "SKU": "URMI-LMP-003",
+      "weight": "2.0 kg",
+      "color": "Dark Brown / পোড়া মাটির গাঢ় রঙ",
+      "images": [
+        "https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=600&auto=format&fit=crop&q=80"
+      ],
+      "seoDescription": "Buy beautiful terracotta table lamps handcrafted in Bangladesh. Perfect for bedroom decor and ambient warm lighting.",
+      "size": "Large (12 inches)",
+      "tags": [
+        "lamp",
+        "light",
+        "shilpa",
+        "home styling",
+        "bedroom"
+      ],
+      "shortDescription": "হস্তশিল্পে তৈরি মাটির টেবিল ল্যাম্প যা ঘরে শান্ত ও মায়াবী পরিবেশ তৈরি করে।",
+      "discountPrice": 950,
+      "id": "clay-lamp-01",
+      "isBestSeller": true,
+      "reviewsCount": 8,
+      "stock": 12
+    },
+    {
+      "description": "বাঙালি ঐতিহ্যবাহী ভোজের জন্য বিশেষ রাজকীয় মাটির থালা। পহেলা বৈশাখ কিংবা যেকোনো পারিবারিক অনুষ্ঠানে মাটির থালায় গরম ভাত ও ভর্তা পরিবেশন উৎসবের আমেজকে বহুগুণ বাড়িয়ে দেয়। এর সমতল ও মসৃণ ফিনিশিং এটিকে সহজেই পরিষ্কারযোগ্য করে তোলে।",
+      "seoTitle": "Royal Clay Dinner Plates - Clay Tableware Bangladesh",
+      "price": 280,
+      "category": "Clay Plate",
+      "isFeatured": false,
+      "material": "Fine Silt Clay",
+      "rating": 4.4,
+      "subCategory": "Tableware",
+      "createdAt": "2026-06-25T14:00:00.000Z",
+      "nameBangla": "রাজকীয় মাটির পরিবেশন থালা",
+      "SKU": "URMI-PLT-005",
+      "nameEnglish": "Royal Clay Dinner Plate",
+      "isNewArrival": true,
+      "weight": "0.6 kg",
+      "color": "Terracotta Natural",
+      "images": [
+        "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=80"
+      ],
+      "seoDescription": "Experience authentic dining with clay dinner plates. Elegant, natural, and safe plateware for serving rice and curries.",
+      "size": "Diameter: 11 inches",
+      "tags": [
+        "plate",
+        "dinnerware",
+        "bengali-food",
+        "kitchenware"
+      ],
+      "id": "clay-plate-01",
+      "discountPrice": 220,
+      "shortDescription": "খাঁটি লাল মাটির মসৃণ ফিনিশিংয়ের পরিবেশন প্লেট বা থালা।",
+      "isBestSeller": false,
+      "stock": 50,
+      "reviewsCount": 4
+    },
+    {
+      "price": 850,
+      "material": "Natural River Clay (নদীর খাঁটি লাল মাটি)",
+      "isFeatured": true,
+      "category": "Clay Tea Pot",
+      "rating": 4.8,
+      "subCategory": "Premium Tableware",
+      "description": "আমাদের দক্ষ কারিগরদের দ্বারা শতভাগ প্রাকৃতিক মাটি দিয়ে তৈরি ঐতিহ্যবাহী চা কেতলি সেট। এটি আপনার চা পানের অভিজ্ঞতাকে করবে আরও স্বাস্থ্যসম্মত ও আকর্ষণীয়। এই সেটে রয়েছে একটি সুন্দর কেতলি এবং ৪টি কাপ। মাটির পাত্রে চা রাখলে চায়ের প্রাকৃতিক সুবাস ও স্বাদ দীর্ঘক্ষণ বজায় থাকে।",
+      "seoTitle": "Traditional Clay Tea Pot Set (মাটির চা কেতলি সেট) - Urmi Clay",
+      "weight": "1.5 kg",
+      "color": "Terracotta Red / মাটির রঙ",
+      "createdAt": "2026-06-25T10:00:00.000Z",
+      "nameBangla": "ঐতিহ্যবাহী মাটির চা কেতলি সেট",
+      "SKU": "URMI-POT-001",
+      "isNewArrival": false,
+      "nameEnglish": "Traditional Clay Tea Pot Set",
+      "discountPrice": 680,
+      "id": "clay-tea-pot-01",
+      "shortDescription": "১টি প্রিমিয়াম মাটির কেতলি ও ৪টি কাপ সহ সম্পূর্ণ ঐতিহ্যবাহী চা সেট।",
+      "isBestSeller": true,
+      "images": [
+        "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=600&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80"
+      ],
+      "tags": [
+        "teapot",
+        "tea-set",
+        "terracotta",
+        "kitchen",
+        "traditional"
+      ],
+      "size": "Medium",
+      "seoDescription": "Buy authentic handmade clay tea pot set in Bangladesh at best price. Natural earthenware pottery for premium tea drinking.",
+      "stock": 25,
+      "reviewsCount": 5
+    },
+    {
+      "createdAt": "2026-06-25T15:00:00.000Z",
+      "nameBangla": "স্মার্ট সিরামিক-মাটি ফিউশন ফুলদানি",
+      "nameEnglish": "Premium Clay Ceramic Fusion Vase",
+      "isNewArrival": true,
+      "SKU": "URMI-VAS-006",
+      "weight": "1.8 kg",
+      "color": "Beige and Brown Fusion",
+      "seoTitle": "Premium Clay Ceramic Fusion Vase Bangladesh",
+      "description": "মাটি ও সিরামিক ফিউশনে তৈরি এই আধুনিক ফুলদানিটি ঘরে একটি স্নিগ্ধ ও আভিজাত্যময় পরিবেশ তৈরি করে। এর মসৃণ ফিনিশিং এবং আকর্ষণীয় আকৃতি এটিকে ড্রইং রুমের সেন্টার টেবিল বা কর্নার স্ট্যান্ডের জন্য উপযোগী করেছে। শুকনো ফুল বা তাজা ফুল উভয়ই সাজিয়ে রাখা যাবে।",
+      "category": "Clay Vase",
+      "isFeatured": true,
+      "material": "Clay & Ceramic blend",
+      "price": 950,
+      "subCategory": "Home Decor",
+      "rating": 4.7,
+      "reviewsCount": 6,
+      "stock": 18,
+      "images": [
+        "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80"
+      ],
+      "seoDescription": "Shop premium clay and ceramic fusion vases for luxury home decor. Handcrafted stylish flower vases.",
+      "size": "Height: 14 inches",
+      "tags": [
+        "vase",
+        "flower-vase",
+        "luxury-decor",
+        "modern-clay"
+      ],
+      "shortDescription": "ড্রইং রুম সাজানোর জন্য মাটির আধুনিক প্রিমিয়াম দীর্ঘস্থায়ী ফুলদানি।",
+      "discountPrice": 799,
+      "id": "clay-vase-01",
+      "isBestSeller": false
+    },
+    {
+      "stock": 15,
+      "reviewsCount": 4,
+      "images": [
+        "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=600&auto=format&fit=crop&q=80"
+      ],
+      "tags": [
+        "wall-decor",
+        "decoration",
+        "terracotta-art",
+        "bengali"
+      ],
+      "seoDescription": "Buy burnt terracotta wall hanging plaques and clay wall decor plates. Traditional handmade Bengali art.",
+      "size": "10 x 10 inches",
+      "id": "clay-wall-hanging-decor",
+      "discountPrice": 499,
+      "shortDescription": "বাঙালিয়ানা ঐতিহ্যবাহী খোদাই করা চমৎকার দেয়াল চিত্র বা ফলক।",
+      "isBestSeller": false,
+      "nameBangla": "পোড়ামাটির দেয়াল চিত্র (হালখাতা আল্পনা)",
+      "createdAt": "2026-06-25T17:00:00.000Z",
+      "SKU": "URMI-WALL-008",
+      "isNewArrival": false,
+      "nameEnglish": "Terracotta Wall Hanging Plaque",
+      "weight": "1.0 kg",
+      "color": "Burnt Sienna (পোড়ামাটি লাল)",
+      "seoTitle": "Burnt Terracotta Wall Art Plaque BD - Urmi Clay",
+      "description": "গ্রামীণ উৎসব ও সংস্কৃতির প্রতিচ্ছবি ফুটিয়ে তোলা এই দেয়াল চিত্রটি শতভাগ পোড়ামাটি দিয়ে তৈরি। আপনার বাড়ির প্রধান প্রবেশদ্বার বা ড্রইংরুমের দেয়ালে এটি ঝুলিয়ে রাখলে আভিজাত্যের স্পর্শ মিলবে। এর সূক্ষ্ম খোদাই কাজ কারিগরদের অসীম ধৈর্যের ফল।",
+      "price": 650,
+      "material": "Terracotta Clay",
+      "isFeatured": true,
+      "category": "Decoration",
+      "rating": 4.7,
+      "subCategory": "Wall Decor"
+    },
+    {
+      "reviewsCount": 15,
+      "stock": 30,
+      "shortDescription": "প্রাকৃতিকভাবে পানি ঠান্ডা ও মিনারেল সমৃদ্ধ রাখার চমৎকার লাল মাটির কলসি।",
+      "id": "clay-water-pitcher",
+      "discountPrice": 390,
+      "isBestSeller": true,
+      "images": [
+        "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=600&auto=format&fit=crop&q=80"
+      ],
+      "size": "Capacity: 5 Liters",
+      "seoDescription": "Drink naturally cool and alkaline water with our traditional handmade clay water pitcher. Pure river clay.",
+      "tags": [
+        "water-pot",
+        "pitcher",
+        "kitchen",
+        "healthy-water"
+      ],
+      "weight": "2.5 kg",
+      "color": "Brick Orange",
+      "createdAt": "2026-06-25T16:00:00.000Z",
+      "nameBangla": "ঠান্ডা পানির মাটির কলসি",
+      "isNewArrival": false,
+      "nameEnglish": "Traditional Clay Water Pitcher",
+      "SKU": "URMI-KLS-007",
+      "category": "Kitchen Items",
+      "isFeatured": false,
+      "material": "Alluvial Clay (পলিমাটি)",
+      "price": 490,
+      "subCategory": "Kitchen Utilities",
+      "rating": 4.8,
+      "description": "গ্রীষ্মের তীব্র গরমে ফ্রিজ ছাড়াই প্রাকৃতিকভাবে ঠান্ডা পানি পানের স্বাস্থ্যসম্মত উপায় হলো মাটির কলসি বা সুরাই। এর ক্ষুদ্রাতিক্ষুদ্র ছিদ্র দিয়ে জলীয়বাষ্প বের হওয়ার সময় পানি প্রাকৃতিকভাবে ঠান্ডা ও ক্ষারীয় (Alkaline) হয়ে ওঠে, যা হজমশক্তি বাড়াতে এবং এসিডিটি দূর করতে অত্যন্ত সহায়ক।",
+      "seoTitle": "Handmade Clay Water Pitcher / Kalshi Online BD"
     }
   ],
   "reviews": [
     {
-      "productId": "clay-tea-pot-01",
+      "id": "rev-1",
       "userName": "Arif Rahman",
       "reply": "ধন্যবাদ আরিফ সাহেব! আপনার ভালো লেগেছে জেনে আমরা আনন্দিত। মাটির পাত্রে চা পানের আনন্দই আলাদা।",
-      "date": "2026-06-25T20:15:00.000Z",
-      "comment": "অসাধারণ একটি প্রডাক্ট! অনেক সুন্দর প্যাকেজিং ছিল, একটুকুও ভাঙ্গেনি। চা খেয়ে মাটির একটা মিষ্টি গন্ধ পাওয়া যায়। ধন্যবাদ উর্মি মৃৎশিল্পকে!",
-      "id": "rev-1",
       "rating": 5,
-      "userId": "customer-demo"
+      "comment": "অসাধারণ একটি প্রডাক্ট! অনেক সুন্দর প্যাকেজিং ছিল, একটুকুও ভাঙ্গেনি। চা খেয়ে মাটির একটা মিষ্টি গন্ধ পাওয়া যায়। ধন্যবাদ উর্মি মৃৎশিল্পকে!",
+      "productId": "clay-tea-pot-01",
+      "userId": "customer-demo",
+      "date": "2026-06-25T20:15:00.000Z"
     },
     {
       "id": "rev-2",
-      "rating": 5,
-      "userId": "cust-2",
       "userName": "Farhana Yasmin",
-      "date": "2026-06-25T19:45:00.000Z",
       "productId": "clay-cup-01",
+      "userId": "cust-2",
+      "date": "2026-06-25T19:45:00.000Z",
+      "rating": 5,
       "comment": "চায়ের কাপগুলো জাস্ট অসাধারণ! ফিনিশিং এত মসৃণ যে ধরলে মনেই হয় না এটা সাধারণ মাটি। পহেলা বৈশাখে মেহমানদের আপ্যায়নে কাজে দেবে।"
     }
   ],
   "orders": [
     {
-      "phone": "01812345678",
-      "createdAt": "2026-06-25T20:20:00.000Z",
+      "id": "ORD-73921",
       "customerName": "Arif Rahman",
-      "email": "arif@gmail.com",
-      "division": "Dhaka",
-      "total": 930,
-      "paymentMethod": "bkash",
-      "shippingCharge": 60,
       "items": [
         {
           "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=600&auto=format&fit=crop&q=80",
-          "productId": "clay-tea-pot-01",
-          "nameEnglish": "Traditional Clay Tea Pot Set",
-          "price": 680,
           "quantity": 1,
-          "nameBangla": "ঐতিহ্যবাহী মাটির চা কেতলি সেট"
+          "price": 680,
+          "nameBangla": "ঐতিহ্যবাহী মাটির চা কেতলি সেট",
+          "nameEnglish": "Traditional Clay Tea Pot Set",
+          "productId": "clay-tea-pot-01"
         },
         {
+          "nameEnglish": "Clay Tea Cups (Pack of 6)",
           "productId": "clay-cup-01",
           "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80",
           "quantity": 1,
-          "nameBangla": "প্রাকৃতিক মাটির চায়ের কাপ (৬ পিস)",
           "price": 240,
-          "nameEnglish": "Clay Tea Cups (Pack of 6)"
+          "nameBangla": "প্রাকৃতিক মাটির চায়ের কাপ (৬ পিস)"
         }
       ],
-      "orderDate": "2026-06-25T20:20:00.000Z",
-      "district": "Dhaka",
-      "shippingAddress": "House 12, Road 5, Dhanmondi",
-      "userId": "customer-demo",
       "trackingNumber": "TRK-URMI-91283",
-      "subtotal": 920,
+      "orderDate": "2026-06-25T20:20:00.000Z",
       "couponDiscount": 50,
-      "paymentStatus": "paid",
+      "district": "Dhaka",
+      "subtotal": 920,
       "orderStatus": "processing",
-      "id": "ORD-73921"
+      "shippingAddress": "House 12, Road 5, Dhanmondi",
+      "paymentStatus": "paid",
+      "email": "arif@gmail.com",
+      "shippingCharge": 60,
+      "division": "Dhaka",
+      "phone": "01812345678",
+      "createdAt": "2026-06-25T20:20:00.000Z",
+      "paymentMethod": "bkash",
+      "userId": "customer-demo",
+      "total": 930
+    },
+    {
+      "shippingAddress": "জয়পুরহাট নতুনহাট গরুহাটি,জয়পুরহাট।",
+      "paymentStatus": "paid",
+      "email": "urmipaul5566@gmail.com",
+      "shippingCharge": 120,
+      "division": "Rajshahi",
+      "phone": "01756511455",
+      "createdAt": "2026-07-07T00:51:23.048Z",
+      "paymentMethod": "cod",
+      "userId": "guest",
+      "total": 360,
+      "id": "ORD-81424",
+      "customerName": "gopal",
+      "items": [
+        {
+          "nameEnglish": "Clay Tea Cups (Pack of 6)",
+          "productId": "clay-cup-01",
+          "quantity": 1,
+          "nameBangla": "প্রাকৃতিক মাটির চায়ের কাপ (৬ পিস)",
+          "price": 240
+        }
+      ],
+      "orderDate": "2026-07-07T00:51:23.048Z",
+      "trackingNumber": "TRK-URMI-863205",
+      "couponDiscount": 0,
+      "district": "Joypurhat",
+      "orderStatus": "delivered",
+      "subtotal": 240
     }
   ],
   "coupons": [
     {
       "discountValue": 10,
-      "expiryDate": "2026-12-31T23:59:59.000Z",
-      "usageCount": 5,
-      "id": "cp-1",
-      "minOrderAmount": 500,
-      "isActive": true,
+      "code": "CLAY10",
       "discountType": "percentage",
-      "code": "CLAY10"
+      "isActive": true,
+      "id": "cp-1",
+      "expiryDate": "2026-12-31T23:59:59.000Z",
+      "minOrderAmount": 500,
+      "usageCount": 5
     },
     {
-      "usageCount": 12,
-      "discountValue": 60,
-      "expiryDate": "2026-12-31T23:59:59.000Z",
-      "code": "URMIFREE",
-      "isActive": true,
       "minOrderAmount": 1000,
+      "usageCount": 12,
+      "expiryDate": "2026-12-31T23:59:59.000Z",
+      "id": "cp-2",
       "discountType": "fixed",
-      "id": "cp-2"
+      "isActive": true,
+      "code": "URMIFREE",
+      "discountValue": 60
     }
   ],
   "sliders": [
     {
-      "titleBangla": "খাঁটি মাটির ঐতিহ্যবাহী স্পর্শ",
-      "titleEnglish": "Traditional Touch of Pure Clay",
-      "id": "sl-1",
+      "image": "/uploads/urmi_clay_logo_1783389748375.jpg",
       "subtitle": "মাটির পাত্রে স্বাস্থ্যকর জীবনযাপন, প্রতিটি কোণায় দেশীয় কৃষ্টির ছোঁয়া।",
-      "link": "/shop",
-      "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=1200&auto=format&fit=crop&q=80"
+      "titleEnglish": "Traditional Touch of Pure Clay",
+      "titleBangla": "খাঁটি মাটির ঐতিহ্যবাহী স্পর্শ",
+      "id": "sl-1",
+      "link": "/shop"
     },
     {
-      "image": "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=1200&auto=format&fit=crop&q=80",
-      "link": "/shop?category=Clay%20Vase",
       "subtitle": "আপনার ড্রইং রুম ও বাড়ীকে সাজিয়ে তুলুন মাটির অপূর্ব শিল্পকর্মে।",
+      "image": "/uploads/clay_tableware_1783389427826.jpg",
       "id": "sl-2",
       "titleBangla": "হস্তশিল্প খোদাই করা নান্দনিক শো-পিস",
+      "link": "/shop?category=Clay%20Vase",
       "titleEnglish": "Aesthetic Handcrafted Pottery"
     }
   ],
   "banners": [
     {
+      "gridArea": "left",
+      "image": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=600&auto=format&fit=crop&q=80",
+      "title": "নতুন কালেকশন ধামাকা অফার",
       "subtitle": "১৫% পর্যন্ত ছাড় সেরা মাটির সামগ্রীতে",
       "id": "bn-1",
-      "title": "নতুন কালেকশন ধামাকা অফার",
-      "gridArea": "left",
-      "link": "/shop?sort=newest",
-      "image": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=600&auto=format&fit=crop&q=80"
+      "link": "/shop?sort=newest"
     },
     {
-      "title": "শতভাগ নিরাপদ ডিনার সেট",
+      "id": "bn-2",
       "link": "/shop?category=Clay%20Plate",
-      "gridArea": "right-top",
-      "image": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=80",
       "subtitle": "কেমিক্যালমুক্ত প্রাকৃতিক থালা-বাসন",
-      "id": "bn-2"
+      "title": "শতভাগ নিরাপদ ডিনার সেট",
+      "image": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=80",
+      "gridArea": "right-top"
     },
     {
-      "id": "bn-3",
-      "subtitle": "উষ্ণ আলোয় রঙিন হোক আপনার ঘর",
-      "link": "/shop?category=Clay%20Lamp",
-      "gridArea": "right-bottom",
       "image": "https://images.unsplash.com/photo-1598511726623-d3c2fa53e284?w=600&auto=format&fit=crop&q=80",
-      "title": "মায়াবী টেবিল ল্যাম্প কালেকশন"
+      "gridArea": "right-bottom",
+      "subtitle": "উষ্ণ আলোয় রঙিন হোক আপনার ঘর",
+      "title": "মায়াবী টেবিল ল্যাম্প কালেকশন",
+      "id": "bn-3",
+      "link": "/shop?category=Clay%20Lamp"
     }
   ]
 }

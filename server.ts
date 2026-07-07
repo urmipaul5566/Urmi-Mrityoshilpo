@@ -60,6 +60,28 @@ function ensureDatabase() {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
+  // Auto-restore persistent assets to /uploads/ so ephemeral server restarts do not lose them
+  const uploadsDir = path.join(process.cwd(), "uploads");
+  const backupDir = path.join(process.cwd(), "src/assets/images");
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+  if (fs.existsSync(backupDir)) {
+    try {
+      const files = fs.readdirSync(backupDir);
+      console.log("[DB] Auto-restoring persistent uploads from backup. Found files:", files);
+      for (const file of files) {
+        const srcFile = path.join(backupDir, file);
+        const destFile = path.join(uploadsDir, file);
+        if (!fs.existsSync(destFile)) {
+          fs.copyFileSync(srcFile, destFile);
+          console.log(`[DB] Auto-restored image: ${file} to uploads folder`);
+        }
+      }
+    } catch (err) {
+      console.error("[DB] Failed to auto-restore backup images:", err);
+    }
+  }
 }
 
 // Repair broken /uploads/ images when ephemeral filesystem resets on cloud hosting
@@ -78,6 +100,52 @@ function repairMissingUploads(data: any) {
         }
         return img;
       });
+    }
+  }
+  return modified;
+}
+
+// Patch sliders & banners with updated aesthetic assets (e.g. clay raw material backgrounds)
+function patchSlidersAndBanners(data: any) {
+  if (!data || !data.sliders) return false;
+  let modified = false;
+  console.log("[DB] Running patchSlidersAndBanners on data. Found sliders count:", data.sliders.length);
+  for (const s of data.sliders) {
+    if (s) {
+      if (s.id === "sl-1" || (s.titleBangla && s.titleBangla.includes("খাঁটি মাটির"))) {
+        const targetImage = "/uploads/urmi_clay_logo_1783389748375.jpg";
+        console.log(`[DB] Found slider "${s.titleBangla}" (ID: ${s.id}). Current image: ${s.image}`);
+        if (s.image !== targetImage) {
+          console.log(`[DB] Updating image for slider "${s.titleBangla}" to: ${targetImage}`);
+          s.image = targetImage;
+          modified = true;
+        }
+      } else if (s.id === "sl-2" || (s.titleBangla && s.titleBangla.includes("হস্তশিল্প খোদাই"))) {
+        const targetImage = "/uploads/clay_tableware_1783389427826.jpg";
+        console.log(`[DB] Found slider "${s.titleBangla}" (ID: ${s.id}). Current image: ${s.image}`);
+        if (s.image !== targetImage) {
+          console.log(`[DB] Updating image for slider "${s.titleBangla}" to: ${targetImage}`);
+          s.image = targetImage;
+          modified = true;
+        }
+      }
+    }
+  }
+  return modified;
+}
+
+// Patch products with high-quality permanent assets (e.g., Mahadev wall set, etc.)
+function patchProducts(data: any) {
+  if (!data || !data.products) return false;
+  let modified = false;
+  const targetImage = "/uploads/clay_mahadev_wall_art_1783390164143.jpg";
+  for (const p of data.products) {
+    if (p && (p.id === "clay-1783260160367" || p.id === "clay-1783358527155" || (p.nameBangla && p.nameBangla.includes("মহাদেব")))) {
+      if (!p.images || p.images[0] !== targetImage) {
+        console.log(`[DB] Patching product "${p.nameBangla}" image to: ${targetImage}`);
+        p.images = [targetImage];
+        modified = true;
+      }
     }
   }
   return modified;
@@ -134,6 +202,8 @@ async function initDbSync() {
     }
   }
   repairMissingUploads(localData);
+  patchSlidersAndBanners(localData);
+  patchProducts(localData);
 
   memoryCache = localData;
 
@@ -180,6 +250,22 @@ async function initDbSync() {
             }
           }
         }
+        const patchedCloud = patchSlidersAndBanners(cloudData);
+        if (patchedCloud) {
+          for (const s of cloudData.sliders) {
+            if (s && s.id) {
+              await setDoc(doc(dbFirestore, "sliders", String(s.id)), s);
+            }
+          }
+        }
+        const patchedProductsCloud = patchProducts(cloudData);
+        if (patchedProductsCloud) {
+          for (const p of cloudData.products) {
+            if (p && p.id && (p.id === "clay-1783260160367" || p.id === "clay-1783358527155" || (p.nameBangla && p.nameBangla.includes("মহাদেব")))) {
+              await setDoc(doc(dbFirestore, "products", String(p.id)), p);
+            }
+          }
+        }
         memoryCache = cloudData;
         fs.writeFileSync(DB_PATH, JSON.stringify(memoryCache, null, 2), "utf-8");
       } else {
@@ -194,6 +280,49 @@ async function initDbSync() {
           }
         }
         console.log("[FIREBASE] Initial cloud seeding complete!");
+      }
+
+      // Restore persistent uploaded images from Firestore uploaded_images collection
+      try {
+        console.log("[FIREBASE] Checking and restoring persistent uploaded images from Firestore...");
+        const uploadsDir = path.join(process.cwd(), "uploads");
+        const backupDir = path.join(process.cwd(), "src/assets/images");
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        if (!fs.existsSync(backupDir)) {
+          fs.mkdirSync(backupDir, { recursive: true });
+        }
+        const uploadsSnap = await getDocs(collection(dbFirestore, "uploaded_images"));
+        let restoredCount = 0;
+        uploadsSnap.forEach(d => {
+          const item = d.data();
+          if (item && item.fileName && item.base64Data) {
+            const filePath = path.join(uploadsDir, item.fileName);
+            const backupPath = path.join(backupDir, item.fileName);
+            let needed = false;
+            if (!fs.existsSync(filePath)) {
+              needed = true;
+            }
+            if (needed) {
+              let cleanBase64 = item.base64Data;
+              if (cleanBase64.includes(";base64,")) {
+                cleanBase64 = cleanBase64.split(";base64,")[1];
+              }
+              const buffer = Buffer.from(cleanBase64, "base64");
+              fs.writeFileSync(filePath, buffer);
+              if (!fs.existsSync(backupPath)) {
+                fs.writeFileSync(backupPath, buffer);
+              }
+              restoredCount++;
+            }
+          }
+        });
+        if (restoredCount > 0) {
+          console.log(`[FIREBASE] Restored ${restoredCount} persistent uploaded images from Firestore cloud.`);
+        }
+      } catch (uploadRestoreErr) {
+        console.error("[FIREBASE] Error restoring persistent uploaded images from Firestore:", uploadRestoreErr);
       }
     } catch (err) {
       console.error("[FIREBASE] Error loading from Firestore, falling back to local storage:", err);
@@ -1064,34 +1193,60 @@ async function startServer() {
   });
 
   // --- FILE UPLOAD ENDPOINT ---
-  app.post("/api/upload", requireAdmin, (req, res) => {
+  app.post("/api/upload", requireAdmin, async (req, res) => {
     try {
       const { fileName, base64Data } = req.body;
       if (!fileName || !base64Data) {
         return res.status(400).json({ message: "ফাইল নাম এবং ডাটা প্রয়োজনীয় (Filename and data are required)" });
       }
 
+      // Generate a unique safe filename to avoid conflicts and spaces
+      const timestamp = Date.now();
+      const sanitizedName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const uniqueFileName = `clay_upload_${timestamp}_${sanitizedName}`;
+      
+      // Extract clean base64 data
+      let cleanBase64 = base64Data;
+      if (base64Data.includes(";base64,")) {
+        cleanBase64 = base64Data.split(";base64,")[1];
+      }
+      const buffer = Buffer.from(cleanBase64, "base64");
+
       const uploadsDir = path.join(process.cwd(), "uploads");
+      const backupDir = path.join(process.cwd(), "src/assets/images");
+
+      // Ensure folders exist
       if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
       }
-
-      const matches = base64Data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-      let dataBuffer: Buffer;
-      
-      if (matches && matches.length === 3) {
-        dataBuffer = Buffer.from(matches[2], "base64");
-      } else {
-        dataBuffer = Buffer.from(base64Data, "base64");
+      if (!fs.existsSync(backupDir)) {
+        fs.mkdirSync(backupDir, { recursive: true });
       }
 
-      const ext = path.extname(fileName) || ".png";
-      const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}${ext}`;
-      const filePath = path.join(uploadsDir, uniqueName);
+      // Save locally to both uploads and persistent backup path
+      const filePath = path.join(uploadsDir, uniqueFileName);
+      const backupPath = path.join(backupDir, uniqueFileName);
+      
+      fs.writeFileSync(filePath, buffer);
+      fs.writeFileSync(backupPath, buffer);
 
-      fs.writeFileSync(filePath, dataBuffer);
+      const fileUrl = `/uploads/${uniqueFileName}`;
 
-      const fileUrl = `/uploads/${uniqueName}`;
+      // Persist the image to Firestore for cloud-native permanence across ephemeral container restarts
+      if (dbFirestore) {
+        try {
+          await setDoc(doc(dbFirestore, "uploaded_images", uniqueFileName), {
+            id: uniqueFileName,
+            fileName: uniqueFileName,
+            base64Data: base64Data, // Full data URI so we can restore it exactly
+            createdAt: new Date().toISOString()
+          });
+          console.log(`[FIREBASE] Persistent cloud backup created for uploaded image: ${uniqueFileName}`);
+        } catch (dbErr: any) {
+          console.error("[FIREBASE] Error backing up uploaded image to Firestore:", dbErr);
+        }
+      }
+
       res.json({ url: fileUrl });
     } catch (error: any) {
       console.error("Upload error:", error);

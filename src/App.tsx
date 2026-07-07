@@ -578,9 +578,6 @@ export default function App() {
                       alt="Traditional Pottery"
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
-                      <p className="text-white text-xs font-bangla italic">ধামরাই পাল পাড়ায় মাটি আকৃতির নিপুণ দৃশ্য</p>
-                    </div>
                   </div>
 
                   <div className="md:col-span-7 flex flex-col gap-4 items-start">

@@ -354,7 +354,7 @@ export const DEFAULT_INITIAL_DATABASE = {
       "isBestSeller": false,
       "isNewArrival": true,
       "images": [
-        "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80"
+        "/uploads/clay_mahadev_wall_art_1783390164143.jpg"
       ],
       "description": "আমাদের দক্ষ কারিগর দ্বারা নিপুণ হাতে খাঁটি লাল মাটি দিয়ে তৈরি মহাদেবের মূর্তি ওয়াল সেট। ঘরের দেয়ালে বা পড়ার টেবিলে রাখার জন্য অত্যন্ত নান্দনিক ও আকর্ষণীয়। সম্পূর্ণ পরিবেশবান্ধব ও টেকসই।",
       "shortDescription": "১ পিস মাটির তৈরি নান্দনিক মহাদেবের মূর্তি ওয়াল সেট।",
@@ -462,7 +462,7 @@ export const DEFAULT_INITIAL_DATABASE = {
   "sliders": [
     {
       "titleEnglish": "Traditional Touch of Pure Clay",
-      "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=1200&auto=format&fit=crop&q=80",
+      "image": "/uploads/urmi_clay_logo_1783389748375.jpg",
       "id": "sl-1",
       "subtitle": "মাটির পাত্রে স্বাস্থ্যকর জীবনযাপন, প্রতিটি কোণায় দেশীয় কৃষ্টির ছোঁয়া।",
       "link": "/shop",
@@ -473,7 +473,7 @@ export const DEFAULT_INITIAL_DATABASE = {
       "link": "/shop?category=Clay%20Vase",
       "titleBangla": "হস্তশিল্প খোদাই করা নান্দনিক শো-পিস",
       "titleEnglish": "Aesthetic Handcrafted Pottery",
-      "image": "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=1200&auto=format&fit=crop&q=80",
+      "image": "/uploads/clay_tableware_1783389427826.jpg",
       "id": "sl-2"
     }
   ],
