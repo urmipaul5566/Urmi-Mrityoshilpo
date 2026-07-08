@@ -1,10 +1,11 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import cors from "cors";
 import { createHash, randomBytes } from "crypto";
 import { createServer as createViteServer } from "vite";
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, query, where, limit } from "firebase/firestore";
 import { DEFAULT_INITIAL_DATABASE } from "./src/lib/defaultDbData.js";
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
@@ -351,6 +352,7 @@ async function startServer() {
   await initDbSync();
 
   const app = express();
+  app.use(cors());
   app.use(express.json({ limit: "50mb" }));
 
   // API Authentication Middleware
@@ -1223,30 +1225,43 @@ async function startServer() {
     if (dbFirestore) {
       try {
         console.log(`[UPLOADS] File ${filename} missing on disk. Attempting dynamic restoration from Firestore...`);
+        
+        let item: any = null;
         const docRef = doc(dbFirestore, "uploaded_images", filename);
         const docSnap = await getDoc(docRef);
+        
         if (docSnap.exists()) {
-          const item = docSnap.data();
-          if (item && item.base64Data) {
-            let cleanBase64 = item.base64Data;
-            if (cleanBase64.includes(";base64,")) {
-              cleanBase64 = cleanBase64.split(";base64,")[1];
-            }
-            const buffer = Buffer.from(cleanBase64, "base64");
-            
-            if (!fs.existsSync(uploadsDir)) {
-              fs.mkdirSync(uploadsDir, { recursive: true });
-            }
-            fs.writeFileSync(filePath, buffer);
-            
-            const backupDir = path.join(process.cwd(), "src/assets/images");
-            if (fs.existsSync(backupDir)) {
-              fs.writeFileSync(path.join(backupDir, filename), buffer);
-            }
-            
-            console.log(`[UPLOADS] Successfully restored missing file dynamically: ${filename}`);
-            return res.sendFile(filePath);
+          item = docSnap.data();
+        } else {
+          // Fallback: Query by "fileName" field in case document IDs were auto-generated in earlier uploads
+          console.log(`[UPLOADS] Document with ID ${filename} not found in Firestore. Trying query fallback by fileName field...`);
+          const q = query(collection(dbFirestore, "uploaded_images"), where("fileName", "==", filename), limit(1));
+          const querySnap = await getDocs(q);
+          if (!querySnap.empty) {
+            item = querySnap.docs[0].data();
+            console.log(`[UPLOADS] Found missing image ${filename} via query fallback!`);
           }
+        }
+
+        if (item && item.base64Data) {
+          let cleanBase64 = item.base64Data;
+          if (cleanBase64.includes(";base64,")) {
+            cleanBase64 = cleanBase64.split(";base64,")[1];
+          }
+          const buffer = Buffer.from(cleanBase64, "base64");
+          
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          fs.writeFileSync(filePath, buffer);
+          
+          const backupDir = path.join(process.cwd(), "src/assets/images");
+          if (fs.existsSync(backupDir)) {
+            fs.writeFileSync(path.join(backupDir, filename), buffer);
+          }
+          
+          console.log(`[UPLOADS] Successfully restored missing file dynamically: ${filename}`);
+          return res.sendFile(filePath);
         }
       } catch (err) {
         console.error(`[UPLOADS] Error dynamically restoring file ${filename} from Firestore:`, err);

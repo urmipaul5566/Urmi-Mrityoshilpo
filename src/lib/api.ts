@@ -1,5 +1,63 @@
 import { User, Product, Order, Review, Coupon, SliderItem, BannerItem } from "../types";
 
+export const BACKEND_URL = "https://urmi-clay-studio.onrender.com";
+
+export const getApiUrl = (endpoint: string): string => {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    // If we're on localhost or running on the backend host, use relative URL.
+    // Otherwise (e.g. Netlify, custom domains), route to Render.com backend.
+    if (
+      hostname !== "localhost" &&
+      !hostname.includes("127.0.0.1") &&
+      !hostname.includes("onrender.com") &&
+      !hostname.includes("run.app")
+    ) {
+      return `${BACKEND_URL}${endpoint}`;
+    }
+  }
+  return endpoint;
+};
+
+export const formatImageUrl = (url: string | undefined): string => {
+  if (!url) return "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80";
+  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
+    return url;
+  }
+  if (url.startsWith("/uploads/") || url.startsWith("uploads/")) {
+    const cleanUrl = url.startsWith("/") ? url : `/${url}`;
+    return getApiUrl(cleanUrl);
+  }
+  return url;
+};
+
+const formatOrderProductImage = (order: any) => {
+  if (order && Array.isArray(order.items)) {
+    order.items = order.items.map((item: any) => {
+      if (item && item.product) {
+        return {
+          ...item,
+          product: {
+            ...item.product,
+            images: item.product.images ? item.product.images.map(formatImageUrl) : []
+          }
+        };
+      }
+      return item;
+    });
+  }
+  return order;
+};
+
+const originalFetch = typeof window !== "undefined" ? window.fetch : null;
+const fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+  const url = typeof input === "string" ? input : input.toString();
+  if (originalFetch) {
+    return originalFetch(getApiUrl(url), init);
+  }
+  return Promise.reject(new Error("Fetch is not available in this environment"));
+};
+
 const getHeaders = () => {
   const token = localStorage.getItem("urmi_token");
   return {
@@ -120,18 +178,29 @@ export const api = {
 
       const res = await fetch(`/api/products?${params.toString()}`);
       if (!res.ok) throw new Error("পণ্য তালিকা লোড করা যায়নি");
-      return res.json() as Promise<{
+      const data = await res.json();
+      if (data && Array.isArray(data.products)) {
+        data.products = data.products.map((p: any) => ({
+          ...p,
+          images: p.images ? p.images.map(formatImageUrl) : []
+        }));
+      }
+      return data as {
         products: Product[];
         total: number;
         pages: number;
         currentPage: number;
-      }>;
+      };
     },
 
     get: async (id: string) => {
       const res = await fetch(`/api/products/${id}`);
       if (!res.ok) throw new Error("পণ্যটি পাওয়া যায়নি");
-      return res.json() as Promise<Product>;
+      const p = await res.json();
+      if (p) {
+        p.images = p.images ? p.images.map(formatImageUrl) : [];
+      }
+      return p as Product;
     },
 
     create: async (data: any) => {
@@ -144,7 +213,11 @@ export const api = {
         const err = await res.json();
         throw new Error(err.message || "পণ্য যোগ করা যায়নি");
       }
-      return res.json() as Promise<Product>;
+      const p = await res.json();
+      if (p) {
+        p.images = p.images ? p.images.map(formatImageUrl) : [];
+      }
+      return p as Product;
     },
 
     update: async (id: string, data: any) => {
@@ -157,7 +230,11 @@ export const api = {
         const err = await res.json();
         throw new Error(err.message || "পণ্য এডিট করা যায়নি");
       }
-      return res.json() as Promise<Product>;
+      const p = await res.json();
+      if (p) {
+        p.images = p.images ? p.images.map(formatImageUrl) : [];
+      }
+      return p as Product;
     },
 
     delete: async (id: string) => {
@@ -220,7 +297,8 @@ export const api = {
         const err = await res.json();
         throw new Error(err.message || "অর্ডারটি সম্পন্ন করা যায়নি");
       }
-      return res.json() as Promise<Order>;
+      const order = await res.json();
+      return formatOrderProductImage(order) as Order;
     },
 
     track: async (trackingNumber: string) => {
@@ -229,7 +307,8 @@ export const api = {
         const err = await res.json();
         throw new Error(err.message || "অর্ডারটি পাওয়া যায়নি");
       }
-      return res.json() as Promise<Order>;
+      const order = await res.json();
+      return formatOrderProductImage(order) as Order;
     },
 
     myOrders: async () => {
@@ -237,7 +316,11 @@ export const api = {
         headers: getHeaders()
       });
       if (!res.ok) throw new Error("আমার অর্ডারসমূহ লোড করা যায়নি");
-      return res.json() as Promise<Order[]>;
+      const orders = await res.json();
+      if (Array.isArray(orders)) {
+        return orders.map(formatOrderProductImage) as Order[];
+      }
+      return orders as Order[];
     },
 
     listAll: async () => {
@@ -245,7 +328,11 @@ export const api = {
         headers: getHeaders()
       });
       if (!res.ok) throw new Error("অর্ডারসমূহ লোড করা যায়নি");
-      return res.json() as Promise<Order[]>;
+      const orders = await res.json();
+      if (Array.isArray(orders)) {
+        return orders.map(formatOrderProductImage) as Order[];
+      }
+      return orders as Order[];
     },
 
     updateStatus: async (id: string, orderStatus?: string, paymentStatus?: string) => {
@@ -258,7 +345,8 @@ export const api = {
         const err = await res.json();
         throw new Error(err.message || "অর্ডার স্ট্যাটাস আপডেট করা যায়নি");
       }
-      return res.json() as Promise<Order>;
+      const order = await res.json();
+      return formatOrderProductImage(order) as Order;
     }
   },
 
@@ -320,7 +408,22 @@ export const api = {
     get: async () => {
       const res = await fetch("/api/home");
       if (!res.ok) throw new Error("হোমপেইজ ডাটা লোড করা যায়নি");
-      return res.json() as Promise<{ sliders: SliderItem[]; banners: BannerItem[] }>;
+      const data = await res.json();
+      if (data) {
+        if (Array.isArray(data.sliders)) {
+          data.sliders = data.sliders.map((s: any) => ({
+            ...s,
+            image: formatImageUrl(s.image)
+          }));
+        }
+        if (Array.isArray(data.banners)) {
+          data.banners = data.banners.map((b: any) => ({
+            ...b,
+            image: formatImageUrl(b.image)
+          }));
+        }
+      }
+      return data as { sliders: SliderItem[]; banners: BannerItem[] };
     },
 
     updateSliders: async (sliders: SliderItem[]) => {
@@ -330,7 +433,14 @@ export const api = {
         body: JSON.stringify(sliders)
       });
       if (!res.ok) throw new Error("স্লাইডার আপডেট করা যায়নি");
-      return res.json() as Promise<SliderItem[]>;
+      const list = await res.json();
+      if (Array.isArray(list)) {
+        return list.map((s: any) => ({
+          ...s,
+          image: formatImageUrl(s.image)
+        })) as SliderItem[];
+      }
+      return list as SliderItem[];
     },
 
     updateBanners: async (banners: BannerItem[]) => {
@@ -340,7 +450,14 @@ export const api = {
         body: JSON.stringify(banners)
       });
       if (!res.ok) throw new Error("ব্যানার আপডেট করা যায়নি");
-      return res.json() as Promise<BannerItem[]>;
+      const list = await res.json();
+      if (Array.isArray(list)) {
+        return list.map((b: any) => ({
+          ...b,
+          image: formatImageUrl(b.image)
+        })) as BannerItem[];
+      }
+      return list as BannerItem[];
     }
   },
 
@@ -351,7 +468,11 @@ export const api = {
         headers: getHeaders()
       });
       if (!res.ok) throw new Error("ড্যাশবোর্ড পরিসংখ্যান লোড করা যায়নি");
-      return res.json() as Promise<{
+      const data = await res.json();
+      if (data && Array.isArray(data.recentOrders)) {
+        data.recentOrders = data.recentOrders.map(formatOrderProductImage);
+      }
+      return data as {
         summary: {
           totalOrders: number;
           totalSales: number;
@@ -361,7 +482,7 @@ export const api = {
         recentOrders: Order[];
         categoryStats: { name: string; value: number }[];
         monthlySales: { month: string; sales: number; orders: number }[];
-      }>;
+      };
     },
     uploadFile: async (fileName: string, base64Data: string) => {
       const res = await fetch("/api/upload", {

@@ -58,5 +58,11 @@ service cloud.firestore {
       allow read: if true;
       allow write: if true;
     }
+
+    // Uploaded images collection
+    match /uploaded_images/{imageId} {
+      allow read: if true;
+      allow write: if true;
+    }
   }
 }
