@@ -1,0 +1,12 @@
+{
+  "firestore": [
+    {
+      "database": "(default)",
+      "rules": "firestore.rules"
+    },
+    {
+      "database": "ai-studio-urmimrityoshilpo-62e9e1c5-47f7-40cc-95fb-74dd69de0469",
+      "rules": "firestore.rules"
+    }
+  ]
+}

@@ -94,48 +94,14 @@ function repairMissingUploads(data: any) {
 
 // Patch sliders & banners with updated aesthetic assets (e.g. clay raw material backgrounds)
 function patchSlidersAndBanners(data: any) {
-  if (!data || !data.sliders) return false;
-  let modified = false;
-  console.log("[DB] Running patchSlidersAndBanners on data. Found sliders count:", data.sliders.length);
-  for (const s of data.sliders) {
-    if (s) {
-      if (s.id === "sl-1" || (s.titleBangla && s.titleBangla.includes("খাঁটি মাটির"))) {
-        const targetImage = "/uploads/urmi_clay_logo_1783389748375.jpg";
-        console.log(`[DB] Found slider "${s.titleBangla}" (ID: ${s.id}). Current image: ${s.image}`);
-        if (s.image !== targetImage) {
-          console.log(`[DB] Updating image for slider "${s.titleBangla}" to: ${targetImage}`);
-          s.image = targetImage;
-          modified = true;
-        }
-      } else if (s.id === "sl-2" || (s.titleBangla && s.titleBangla.includes("হস্তশিল্প খোদাই"))) {
-        const targetImage = "/uploads/clay_tableware_1783389427826.jpg";
-        console.log(`[DB] Found slider "${s.titleBangla}" (ID: ${s.id}). Current image: ${s.image}`);
-        if (s.image !== targetImage) {
-          console.log(`[DB] Updating image for slider "${s.titleBangla}" to: ${targetImage}`);
-          s.image = targetImage;
-          modified = true;
-        }
-      }
-    }
-  }
-  return modified;
+  // Disabled to allow user custom slider uploads
+  return false;
 }
 
 // Patch products with high-quality permanent assets (e.g., Mahadev wall set, etc.)
 function patchProducts(data: any) {
-  if (!data || !data.products) return false;
-  let modified = false;
-  const targetImage = "/uploads/clay_mahadev_wall_art_1783390164143.jpg";
-  for (const p of data.products) {
-    if (p && (p.id === "clay-1783260160367" || p.id === "clay-1783358527155" || (p.nameBangla && p.nameBangla.includes("মহাদেব")))) {
-      if (!p.images || p.images[0] !== targetImage) {
-        console.log(`[DB] Patching product "${p.nameBangla}" image to: ${targetImage}`);
-        p.images = [targetImage];
-        modified = true;
-      }
-    }
-  }
-  return modified;
+  // Disabled to allow user custom product uploads
+  return false;
 }
 
 // Initialize database from Firestore or local disk
@@ -226,38 +192,17 @@ async function initDbSync() {
           cloudData.users.push(defaultAdmin);
           await setDoc(doc(dbFirestore, "users", String(defaultAdmin.id)), defaultAdmin);
         }
-        // Merge demo defaults if missing in cloud
+        // Merge demo defaults if missing in cloud (only merge users collection so Admin accounts aren't lost)
         for (const col of COLLECTIONS) {
+          if (col !== "users") {
+            continue; // Skip products, reviews, orders, banners, sliders, coupons to allow admin deletions to persist permanently!
+          }
           const defaults = localData[col] || [];
           for (const item of defaults) {
             if (item && item.id && !cloudData[col].some((ci: any) => String(ci.id) === String(item.id))) {
               cloudData[col].push(item);
               await setDoc(doc(dbFirestore, col, String(item.id)), item);
               knownIds[col].add(String(item.id));
-            }
-          }
-        }
-        const repaired = repairMissingUploads(cloudData);
-        if (repaired) {
-          for (const p of cloudData.products) {
-            if (p && p.id) {
-              await setDoc(doc(dbFirestore, "products", String(p.id)), p);
-            }
-          }
-        }
-        const patchedCloud = patchSlidersAndBanners(cloudData);
-        if (patchedCloud) {
-          for (const s of cloudData.sliders) {
-            if (s && s.id) {
-              await setDoc(doc(dbFirestore, "sliders", String(s.id)), s);
-            }
-          }
-        }
-        const patchedProductsCloud = patchProducts(cloudData);
-        if (patchedProductsCloud) {
-          for (const p of cloudData.products) {
-            if (p && p.id && (p.id === "clay-1783260160367" || p.id === "clay-1783358527155" || (p.nameBangla && p.nameBangla.includes("মহাদেব")))) {
-              await setDoc(doc(dbFirestore, "products", String(p.id)), p);
             }
           }
         }
@@ -347,9 +292,226 @@ function hashPassword(password: string): string {
   return createHash("sha256").update(password).digest("hex");
 }
 
+// Automatically restore missing uploaded images referenced in the database in the background at startup
+function backgroundRestoreActiveUploads() {
+  if (!dbFirestore) return;
+  
+  Promise.resolve().then(async () => {
+    try {
+      console.log("[RESTORE] Starting background restoration of active uploads referenced in DB...");
+      const db = readDb();
+      const dbString = JSON.stringify(db);
+      
+      // Match all patterns like "/uploads/filename.ext"
+      const uploadRegex = /\/uploads\/([a-zA-Z0-9._-]+)/g;
+      const filenames = new Set<string>();
+      let match;
+      while ((match = uploadRegex.exec(dbString)) !== null) {
+        filenames.add(match[1]);
+      }
+      
+      if (filenames.size === 0) {
+        console.log("[RESTORE] No uploads referenced in database.");
+        return;
+      }
+      
+      console.log(`[RESTORE] Found ${filenames.size} active uploads referenced in database:`, Array.from(filenames));
+      
+      const uploadsDir = path.join(process.cwd(), "uploads");
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+      const backupDir = path.join(process.cwd(), "src/assets/images");
+      if (!fs.existsSync(backupDir)) {
+        fs.mkdirSync(backupDir, { recursive: true });
+      }
+      
+      for (const filename of filenames) {
+        const filePath = path.join(uploadsDir, filename);
+        if (fs.existsSync(filePath)) {
+          // File already exists on disk, no need to restore
+          continue;
+        }
+        
+        console.log(`[RESTORE] Active file ${filename} missing on disk. Restoring from Firestore in background...`);
+        const docRef = doc(dbFirestore, "uploaded_images", filename);
+        const docSnap = await getDoc(docRef);
+        
+        let item: any = null;
+        if (docSnap.exists()) {
+          item = docSnap.data();
+        } else {
+          // Fallback query
+          const q = query(collection(dbFirestore, "uploaded_images"), where("fileName", "==", filename), limit(1));
+          const querySnap = await getDocs(q);
+          if (!querySnap.empty) {
+            item = querySnap.docs[0].data();
+          }
+        }
+        
+        if (item && item.base64Data) {
+          let cleanBase64 = item.base64Data;
+          if (cleanBase64.includes(";base64,")) {
+            cleanBase64 = cleanBase64.split(";base64,")[1];
+          }
+          const buffer = Buffer.from(cleanBase64, "base64");
+          fs.writeFileSync(filePath, buffer);
+          fs.writeFileSync(path.join(backupDir, filename), buffer);
+          console.log(`[RESTORE] Successfully restored active file: ${filename}`);
+        } else {
+          console.warn(`[RESTORE] Failed to find persistent Firestore backup for active file: ${filename}`);
+        }
+      }
+      console.log("[RESTORE] Background active uploads restoration process complete.");
+    } catch (err) {
+      console.error("[RESTORE] Error in background active uploads restoration:", err);
+    }
+  });
+}
+
+async function cleanupDefaultMockData() {
+  try {
+    console.log("[CLEANUP] Checking for default mock data to remove...");
+    const db = readDb();
+    let modified = false;
+
+    const MOCK_PRODUCT_IDS = [
+      "clay-cup-01",
+      "clay-flower-pot-01",
+      "clay-jewelry-gift-box",
+      "clay-lamp-01",
+      "clay-plate-01",
+      "clay-tea-pot-01",
+      "clay-vase-01",
+      "clay-wall-hanging-decor",
+      "clay-water-pitcher"
+    ];
+    const MOCK_REVIEW_IDS = ["rev-1", "rev-2"];
+    const MOCK_ORDER_IDS = ["ORD-73921"];
+    const MOCK_BANNER_IDS = ["bn-1", "bn-2", "bn-3"];
+
+    // Filter local products
+    const initialProductCount = db.products ? db.products.length : 0;
+    if (db.products) {
+      db.products = db.products.filter((p: any) => !MOCK_PRODUCT_IDS.includes(p.id));
+      if (db.products.length !== initialProductCount) {
+        modified = true;
+        console.log(`[CLEANUP] Filtered products: ${initialProductCount} -> ${db.products.length}`);
+      }
+    }
+
+    // Filter local reviews
+    const initialReviewCount = db.reviews ? db.reviews.length : 0;
+    if (db.reviews) {
+      db.reviews = db.reviews.filter((r: any) => !MOCK_REVIEW_IDS.includes(r.id) && !MOCK_PRODUCT_IDS.includes(r.productId));
+      if (db.reviews.length !== initialReviewCount) {
+        modified = true;
+        console.log(`[CLEANUP] Filtered reviews: ${initialReviewCount} -> ${db.reviews.length}`);
+      }
+    }
+
+    // Filter local orders
+    const initialOrderCount = db.orders ? db.orders.length : 0;
+    if (db.orders) {
+      db.orders = db.orders.filter((o: any) => {
+        if (MOCK_ORDER_IDS.includes(o.id)) return false;
+        if (o.items && Array.isArray(o.items)) {
+          return !o.items.some((item: any) => MOCK_PRODUCT_IDS.includes(item.productId));
+        }
+        return true;
+      });
+      if (db.orders.length !== initialOrderCount) {
+        modified = true;
+        console.log(`[CLEANUP] Filtered orders: ${initialOrderCount} -> ${db.orders.length}`);
+      }
+    }
+
+    // Filter local banners
+    const initialBannerCount = db.banners ? db.banners.length : 0;
+    if (db.banners) {
+      db.banners = db.banners.filter((b: any) => !MOCK_BANNER_IDS.includes(b.id));
+      if (db.banners.length !== initialBannerCount) {
+        modified = true;
+        console.log(`[CLEANUP] Filtered banners: ${initialBannerCount} -> ${db.banners.length}`);
+      }
+    }
+
+    if (modified) {
+      writeDb(db);
+      console.log("[CLEANUP] Local database cleaned and written successfully.");
+    }
+
+    // Delete from Firestore
+    if (dbFirestore) {
+      console.log("[CLEANUP] Deleting mock data from Firestore...");
+      
+      for (const id of MOCK_PRODUCT_IDS) {
+        try {
+          const docRef = doc(dbFirestore, "products", id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            await deleteDoc(docRef);
+            console.log(`[CLEANUP] Deleted mock product ${id} from Firestore`);
+          }
+        } catch (e) {
+          console.error(`[CLEANUP] Error deleting product ${id} from Firestore:`, e);
+        }
+      }
+
+      for (const id of MOCK_REVIEW_IDS) {
+        try {
+          const docRef = doc(dbFirestore, "reviews", id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            await deleteDoc(docRef);
+            console.log(`[CLEANUP] Deleted mock review ${id} from Firestore`);
+          }
+        } catch (e) {
+          console.error(`[CLEANUP] Error deleting review ${id} from Firestore:`, e);
+        }
+      }
+
+      for (const id of MOCK_ORDER_IDS) {
+        try {
+          const docRef = doc(dbFirestore, "orders", id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            await deleteDoc(docRef);
+            console.log(`[CLEANUP] Deleted mock order ${id} from Firestore`);
+          }
+        } catch (e) {
+          console.error(`[CLEANUP] Error deleting order ${id} from Firestore:`, e);
+        }
+      }
+
+      for (const id of MOCK_BANNER_IDS) {
+        try {
+          const docRef = doc(dbFirestore, "banners", id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            await deleteDoc(docRef);
+            console.log(`[CLEANUP] Deleted mock banner ${id} from Firestore`);
+          }
+        } catch (e) {
+          console.error(`[CLEANUP] Error deleting banner ${id} from Firestore:`, e);
+        }
+      }
+      console.log("[CLEANUP] Firestore database cleanup complete.");
+    }
+  } catch (err) {
+    console.error("[CLEANUP] Error during cleanup:", err);
+  }
+}
+
 async function startServer() {
   // Synchronize database with Firebase Firestore on boot
   await initDbSync();
+  
+  // Clean up any old mock database elements
+  await cleanupDefaultMockData();
+  
+  // Restore any active uploads in the background so disk is fully populated
+  backgroundRestoreActiveUploads();
 
   const app = express();
   app.use(cors());
@@ -1268,6 +1430,10 @@ async function startServer() {
       }
     }
 
+    // Set cache-control headers to prevent the browser from caching this fallback redirect
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
     return res.redirect("https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=600&auto=format&fit=crop&q=80");
   });
 
